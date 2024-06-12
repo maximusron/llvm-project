@@ -450,6 +450,13 @@ llvm::Error Interpreter::Execute(PartialTranslationUnit &T) {
   if (auto Err = IncrExecutor->runCtors())
     return Err;
 
+  #ifdef NDEBUG
+  
+  for (auto& PTU : IncrParser->getPTUs())
+    assert(!PTU.TheModule && "Existing Partial Translation Unit not sent to JIT before calling execute (code declared but not executed)");
+  
+  #endif
+
   return llvm::Error::success();
 }
 
